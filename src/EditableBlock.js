@@ -40,9 +40,6 @@ class EditableBlock extends React.Component {
     const tagChanged = prevState.tag !== this.state.tag;
     const blockChanged = prevState.flag !== this.state.flag;
     if (htmlChanged || tagChanged || blockChanged) {
-      if (blockChanged) {
-        console.log(this.props.id + ' block changed : ' + this.props.flag);
-      }
       this.props.updatePage({
         id: this.props.id,
         html: this.state.html,
@@ -160,19 +157,16 @@ class EditableBlock extends React.Component {
         )}
         <ContentEditable
           //disabled={false} // use true to disable editing
-          style={
-            // { marginLeft: '24px', marginRight: '24px' },
-            {
-              marginLeft: '24px',
-              marginRight: '24px',
-              background: this.props.flag ? '#DBE1F6' : '#EDEDED',
-              border: this.props.flag ? '1px solid #4C6EF5' : null,
-              outlineColor: '#4C6EF5',
-              borderRadious: '2px',
-            }
-          }
+          style={{
+            marginLeft: '24px',
+            marginRight: '24px',
+            background: this.props.flag ? '#DBE1F6' : '#EDEDED',
+            border: this.props.flag ? '1px solid #4C6EF5' : null,
+            outlineColor: '#4C6EF5',
+            borderRadius: '2px',
+          }}
           innerRef={this.contentEditable}
-          html={this.state.html}
+          html={this.props.html}
           flag={this.props.flag}
           tagName={this.state.tag}
           onChange={this.onChangeHandler}

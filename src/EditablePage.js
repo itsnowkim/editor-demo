@@ -61,26 +61,30 @@ const EditPage = () => {
       };
     } else if (prevHtml.length === 0 && nextHtml.length !== 0) {
       //new -> index, next -> next
+      updatedBlocks[index] = {
+        ...updatedBlocks[index],
+        flag: true,
+        html: newHtml,
+      };
+      const newBlock = { id: uid(), html: nextHtml, tag: 'p', flag: false };
+      updatedBlocks.splice(index + 1, 0, newBlock);
     } else if (prevHtml.length !== 0 && nextHtml.length === 0) {
       // prev -> index, new -> next
+      updatedBlocks[index] = {
+        ...updatedBlocks[index],
+        html: prevHtml,
+      };
+      const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: true };
+      updatedBlocks.splice(index + 1, 0, newBlock);
     } else {
       // update all
+      updatedBlocks[index] = { ...updatedBlocks[index], html: prevHtml };
+      const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: true };
+      updatedBlocks.splice(index + 1, 0, newBlock);
+      const nextBlock = { id: uid(), html: nextHtml, tag: 'p', flag: false };
+      updatedBlocks.splice(index + 2, 0, nextBlock);
     }
     setBlocks(updatedBlocks);
-    // console.log(index);
-    // const updatedBlocks = [...blocks];
-    // updatedBlocks[index] = {
-    //   ...updatedBlocks[index],
-    //   tag: currentBlock.tag,
-    //   html: prevHtml,
-    //   flag: currentBlock.flag,
-    // };
-    // const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: true };
-    // const nextBlock = { id: uid(), html: nextHtml, tag: 'p', flag: false };
-    // updatedBlocks.splice(index + 1, 0, newBlock);
-    // updatedBlocks.splice(index + 2, 0, nextBlock);
-
-    // setBlocks(updatedBlocks);
   };
 
   return (
@@ -93,6 +97,7 @@ const EditPage = () => {
         margin: '24px',
         paddingTop: '24px',
         border: '1px solid black',
+        borderRadius: '2px',
         backgroundColor: '#ffffff',
       }}
     >

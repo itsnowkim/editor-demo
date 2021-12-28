@@ -82,8 +82,8 @@ class EditableBlock extends React.Component {
         const { x: endX, y: endY } = getCaretCoordinates(false); // fromEnd
         const { x: startX, y: startY } = getCaretCoordinates(true); // fromStart
         const middleX = startX + (endX - startX) / 2;
-        const resY = endY + (startY - endY) / 2;
-        return { x: middleX, y: endY };
+
+        return { x: middleX, y: endY + startY - startY };
       // case 'DRAG_HANDLE_CLICK':
       //   const x =
       //     parent.offsetLeft - parent.scrollLeft + parent.clientLeft - 90;

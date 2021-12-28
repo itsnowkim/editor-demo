@@ -11,7 +11,7 @@ class EditableBlock extends React.Component {
     this.state = {
       html: '',
       tag: 'p',
-      isBlock: true,
+      flag: false,
       previousKey: null,
       actionMenuOpen: false,
       actionMenuPosition: { x: null, y: null },
@@ -28,21 +28,31 @@ class EditableBlock extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ html: this.props.html, tag: this.props.tag });
+    this.setState({
+      ...this.state,
+      html: this.props.html,
+      tag: this.props.tag,
+      flag: this.props.flag,
+    });
   }
   componentDidUpdate(prevProps, prevState) {
     const htmlChanged = prevState.html !== this.state.html;
     const tagChanged = prevState.tag !== this.state.tag;
-    if (htmlChanged || tagChanged) {
+    const blockChanged = prevState.flag !== this.state.flag;
+    if (htmlChanged || tagChanged || blockChanged) {
+      if (blockChanged) {
+        console.log(this.props.id + ' block changed : ' + this.props.flag);
+      }
       this.props.updatePage({
         id: this.props.id,
         html: this.state.html,
         tag: this.state.tag,
+        flag: this.props.flag,
       });
     }
   }
   onChangeHandler(e) {
-    this.setState({ html: e.target.value });
+    this.setState({ ...this.state, html: e.target.value });
   }
 
   onKeyDownHandler(e) {
@@ -84,7 +94,6 @@ class EditableBlock extends React.Component {
         return { x: null, y: null };
     }
   }
-
   openActionMenu(parent, trigger, start, end) {
     // floating point x, y value
     const { x, y } = this.calculateActionMenuPosition(parent, trigger);
@@ -142,7 +151,7 @@ class EditableBlock extends React.Component {
                   id: this.props.id,
                   html: this.state.html,
                   tag: this.state.tag,
-                  isBlock: !this.state.isBlock,
+                  flag: this.state.flag,
                   startPoint: this.state.selectionStart,
                   endPoint: this.state.selectionEnd,
                 }),
@@ -151,19 +160,24 @@ class EditableBlock extends React.Component {
         )}
         <ContentEditable
           //disabled={false} // use true to disable editing
-          style={{
-            backgroundColor: '#EDEDED',
-            marginLeft: '24px',
-            marginRight: '24px',
-          }}
-          className="Block"
+          style={
+            // { marginLeft: '24px', marginRight: '24px' },
+            {
+              marginLeft: '24px',
+              marginRight: '24px',
+              background: this.props.flag ? '#DBE1F6' : '#EDEDED',
+              border: this.props.flag ? '1px solid #4C6EF5' : null,
+              outlineColor: '#4C6EF5',
+              borderRadious: '2px',
+            }
+          }
           innerRef={this.contentEditable}
           html={this.state.html}
+          flag={this.props.flag}
           tagName={this.state.tag}
           onChange={this.onChangeHandler}
           onKeyDown={this.onKeyDownHandler}
           onMouseUp={this.handleMouseUp}
-          // actionMenuOpen이 true일 경우 style 바꿀 생각 필요
         />
       </>
     );

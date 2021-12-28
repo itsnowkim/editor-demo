@@ -2,7 +2,7 @@ import { useState } from 'react';
 import EditableBlock from './EditableBlock';
 import uid from './utils/uid';
 const EditPage = () => {
-  const initialBlock = { id: uid(), html: '', tag: 'p', isBlock: false };
+  const initialBlock = { id: uid(), html: '', tag: 'p', flag: false };
   const [blocks, setBlocks] = useState([initialBlock]);
 
   const updatePageHandler = (updatedBlock) => {
@@ -12,12 +12,13 @@ const EditPage = () => {
       ...updatedBlocks[index],
       tag: updatedBlock.tag,
       html: updatedBlock.html,
+      flag: updatedBlock.flag,
     };
     setBlocks(updatedBlocks);
   };
 
   const addBlockHandler = (currentBlock) => {
-    const newBlock = { id: uid(), html: '', tag: 'p', isBlock: false };
+    const newBlock = { id: uid(), html: '', tag: 'p', flag: false };
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
@@ -44,29 +45,42 @@ const EditPage = () => {
   const updateBlockHandler = (currentBlock) => {
     const { startPoint, endPoint } = currentBlock;
     const targetHtml = currentBlock.html;
+    // 쪼개지는 범위에 따라 빈 string에 대한 핸들링 필요
     const prevHtml = targetHtml.substring(0, startPoint);
     const newHtml = targetHtml.substring(startPoint, endPoint);
     const nextHtml = targetHtml.substring(endPoint);
-
-    console.log(currentBlock);
-    // 해당 값을 새로운 component로 생성, isBlock=true로.
-    // blocks 배열에 올바른 위치에 넣어주기
+    const updatedBlocks = [...blocks];
 
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
-    console.log(index);
-    const updatedBlocks = [...blocks];
-    updatedBlocks[index] = {
-      ...updatedBlocks[index],
-      tag: currentBlock.tag,
-      html: prevHtml,
-      isBlock: currentBlock.isBlock,
-    };
-    const newBlock = { id: uid(), html: newHtml, tag: 'p', isBlock: true };
-    const nextBlock = { id: uid(), html: nextHtml, tag: 'p', isBlock: false };
-    updatedBlocks.splice(index + 1, 0, newBlock);
-    updatedBlocks.splice(index + 2, 0, nextBlock);
 
+    if (prevHtml.length === 0 && nextHtml.length === 0) {
+      //just update that index
+      updatedBlocks[index] = {
+        ...updatedBlocks[index],
+        flag: true,
+      };
+    } else if (prevHtml.length === 0 && nextHtml.length !== 0) {
+      //new -> index, next -> next
+    } else if (prevHtml.length !== 0 && nextHtml.length === 0) {
+      // prev -> index, new -> next
+    } else {
+      // update all
+    }
     setBlocks(updatedBlocks);
+    // console.log(index);
+    // const updatedBlocks = [...blocks];
+    // updatedBlocks[index] = {
+    //   ...updatedBlocks[index],
+    //   tag: currentBlock.tag,
+    //   html: prevHtml,
+    //   flag: currentBlock.flag,
+    // };
+    // const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: true };
+    // const nextBlock = { id: uid(), html: nextHtml, tag: 'p', flag: false };
+    // updatedBlocks.splice(index + 1, 0, newBlock);
+    // updatedBlocks.splice(index + 2, 0, nextBlock);
+
+    // setBlocks(updatedBlocks);
   };
 
   return (
@@ -89,6 +103,7 @@ const EditPage = () => {
             id={block.id}
             tag={block.tag}
             html={block.html}
+            flag={block.flag}
             updatePage={updatePageHandler}
             addBlock={addBlockHandler}
             deleteBlock={deleteBlockHandler}

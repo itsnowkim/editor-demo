@@ -1,0 +1,12 @@
+.contentIsBlock {
+  background: '#DBE1F6';
+  outline-color: '#4C6EF5';
+  margin-left: '24px';
+  margin-right: '24px';
+}
+.contentDefault {
+  background: '#EDEDED';
+  outline-color: '#4C6EF5';
+  margin-left: '24px';
+  margin-right: '24px';
+}

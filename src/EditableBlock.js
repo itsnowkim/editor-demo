@@ -152,7 +152,7 @@ class EditableBlock extends React.Component {
         <ContentEditable
           //disabled={false} // use true to disable editing
           style={{
-            backgroundColor: '#E1E6FA',
+            backgroundColor: '#EDEDED',
             marginLeft: '24px',
             marginRight: '24px',
           }}

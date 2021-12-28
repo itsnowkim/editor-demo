@@ -2,7 +2,7 @@ import { useState } from 'react';
 import EditableBlock from './EditableBlock';
 import uid from './utils/uid';
 const EditPage = () => {
-  const initialBlock = { id: uid(), html: '', tag: 'p' };
+  const initialBlock = { id: uid(), html: '', tag: 'p', isBlock: false };
   const [blocks, setBlocks] = useState([initialBlock]);
 
   const updatePageHandler = (updatedBlock) => {
@@ -17,7 +17,7 @@ const EditPage = () => {
   };
 
   const addBlockHandler = (currentBlock) => {
-    const newBlock = { id: uid(), html: '', tag: 'p', isBlock: true };
+    const newBlock = { id: uid(), html: '', tag: 'p', isBlock: false };
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
@@ -42,16 +42,31 @@ const EditPage = () => {
   };
 
   const updateBlockHandler = (currentBlock) => {
+    const { startPoint, endPoint } = currentBlock;
+    const targetHtml = currentBlock.html;
+    const prevHtml = targetHtml.substring(0, startPoint);
+    const newHtml = targetHtml.substring(startPoint, endPoint);
+    const nextHtml = targetHtml.substring(endPoint);
+
     console.log(currentBlock);
-    // const index = blocks.map((b) => b._id).indexOf(currentBlock.id);
-    // const updatedBlocks = [...blocks];
-    // updatedBlocks[index] = {
-    //   ...updatedBlocks[index],
-    //   tag: currentBlock.tag,
-    //   html: currentBlock.html,
-    //   isBlock: currentBlock.isBlock,
-    // };
-    // setBlocks(updatedBlocks);
+    // 해당 값을 새로운 component로 생성, isBlock=true로.
+    // blocks 배열에 올바른 위치에 넣어주기
+
+    const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
+    console.log(index);
+    const updatedBlocks = [...blocks];
+    updatedBlocks[index] = {
+      ...updatedBlocks[index],
+      tag: currentBlock.tag,
+      html: prevHtml,
+      isBlock: currentBlock.isBlock,
+    };
+    const newBlock = { id: uid(), html: newHtml, tag: 'p', isBlock: true };
+    const nextBlock = { id: uid(), html: nextHtml, tag: 'p', isBlock: false };
+    updatedBlocks.splice(index + 1, 0, newBlock);
+    updatedBlocks.splice(index + 2, 0, nextBlock);
+
+    setBlocks(updatedBlocks);
   };
 
   return (
@@ -64,6 +79,7 @@ const EditPage = () => {
         margin: '24px',
         paddingTop: '24px',
         border: '1px solid black',
+        backgroundColor: '#ffffff',
       }}
     >
       {blocks.map((block) => {

@@ -4,8 +4,8 @@ import uid from './utils/uid';
 import fetchedData from './data.json';
 
 const EditPage = () => {
-  const initialBlock = { id: uid(), html: '', tag: 'p', flag: false };
-  const [blocks, setBlocks] = useState([initialBlock]);
+  // const initialBlock = { id: uid(), html: '', tag: 'p', flag: 'false' };
+  const [blocks, setBlocks] = useState(fetchedData);
 
   const updatePageHandler = (updatedBlock) => {
     const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
@@ -20,7 +20,7 @@ const EditPage = () => {
   };
 
   const addBlockHandler = (currentBlock) => {
-    const newBlock = { id: uid(), html: '', tag: 'p', flag: false };
+    const newBlock = { id: uid(), html: '', tag: 'p', flag: 'false' };
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
@@ -52,38 +52,46 @@ const EditPage = () => {
     const newHtml = targetHtml.substring(startPoint, endPoint);
     const nextHtml = targetHtml.substring(endPoint);
     const updatedBlocks = [...blocks];
+    // console.log(prevHtml);
+    // console.log(newHtml);
+    // console.log(nextHtml);
 
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
 
     if (prevHtml.length === 0 && nextHtml.length === 0) {
       //just update that index
+      console.log('case1');
       updatedBlocks[index] = {
         ...updatedBlocks[index],
-        flag: true,
+        flag: 'true',
       };
     } else if (prevHtml.length === 0 && nextHtml.length !== 0) {
       //new -> index, next -> next
+      console.log('case2');
+      console.log(nextHtml.length);
       updatedBlocks[index] = {
         ...updatedBlocks[index],
-        flag: true,
+        flag: 'true',
         html: newHtml,
       };
-      const newBlock = { id: uid(), html: nextHtml, tag: 'p', flag: false };
+      const newBlock = { id: uid(), html: nextHtml, tag: 'p', flag: 'false' };
       updatedBlocks.splice(index + 1, 0, newBlock);
     } else if (prevHtml.length !== 0 && nextHtml.length === 0) {
       // prev -> index, new -> next
+      console.log('case3');
       updatedBlocks[index] = {
         ...updatedBlocks[index],
         html: prevHtml,
       };
-      const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: true };
+      const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: 'true' };
       updatedBlocks.splice(index + 1, 0, newBlock);
-    } else {
+    } else if (prevHtml.length !== 0 && nextHtml.length !== 0) {
       // update all
+      console.log('case4');
       updatedBlocks[index] = { ...updatedBlocks[index], html: prevHtml };
-      const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: true };
+      const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: 'true' };
       updatedBlocks.splice(index + 1, 0, newBlock);
-      const nextBlock = { id: uid(), html: nextHtml, tag: 'p', flag: false };
+      const nextBlock = { id: uid(), html: nextHtml, tag: 'p', flag: 'false' };
       updatedBlocks.splice(index + 2, 0, nextBlock);
     }
     setBlocks(updatedBlocks);
@@ -105,6 +113,9 @@ const EditPage = () => {
     >
       {blocks.map((block) => {
         return (
+          // EditableBlock argument로 받을 수 있는게 string이고,
+          // boolean을 받는 속성이 따로 있음.
+          // flag를 boolean type으로 굳이 할 수는 있는데 에러 나옴.
           <EditableBlock
             key={block.id}
             id={block.id}

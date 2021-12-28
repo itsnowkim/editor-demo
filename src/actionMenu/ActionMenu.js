@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 
-const MENU_WIDTH = 150;
-const MENU_HEIGHT = 40;
+const MENU_HEIGHT = 20;
 
 const ActionMenu = ({ position, actions }) => {
-  const x = position.x - MENU_WIDTH / 2;
-  const y = position.y - MENU_HEIGHT - 10;
+  const x = position.x;
+  const y = position.y + MENU_HEIGHT;
 
   return (
     <div

@@ -11,7 +11,7 @@ class EditableBlock extends React.Component {
     this.state = {
       html: '',
       tag: 'p',
-      flag: false,
+      flag: 'false',
       previousKey: null,
       actionMenuOpen: false,
       actionMenuPosition: { x: null, y: null },
@@ -35,6 +35,7 @@ class EditableBlock extends React.Component {
       flag: this.props.flag,
     });
   }
+
   componentDidUpdate(prevProps, prevState) {
     const htmlChanged = prevState.html !== this.state.html;
     const tagChanged = prevState.tag !== this.state.tag;
@@ -81,7 +82,8 @@ class EditableBlock extends React.Component {
         const { x: endX, y: endY } = getCaretCoordinates(false); // fromEnd
         const { x: startX, y: startY } = getCaretCoordinates(true); // fromStart
         const middleX = startX + (endX - startX) / 2;
-        return { x: middleX, y: startY };
+        const resY = endY + (startY - endY) / 2;
+        return { x: middleX, y: endY };
       // case 'DRAG_HANDLE_CLICK':
       //   const x =
       //     parent.offsetLeft - parent.scrollLeft + parent.clientLeft - 90;
@@ -155,16 +157,21 @@ class EditableBlock extends React.Component {
             }}
           />
         )}
+
         <ContentEditable
           //disabled={false} // use true to disable editing
           style={{
             marginLeft: '24px',
             marginRight: '24px',
-            padding: '16px',
-            background: this.props.flag ? '#DBE1F6' : '#EDEDED',
-            border: this.props.flag ? '1px solid #4C6EF5' : null,
+            paddingTop: '12px',
+            paddingBottom: '12px',
+            paddingLeft: '6px',
+            paddingRight: '6px',
+            background: this.props.flag === 'true' ? '#DBE1F6' : '#EDEDED',
+            border: this.props.flag === 'true' ? '1px solid #4C6EF5' : null,
             outlineColor: '#4C6EF5',
             borderRadius: '2px',
+            fontSize: '12px',
           }}
           innerRef={this.contentEditable}
           html={this.props.html}

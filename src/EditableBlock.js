@@ -1,10 +1,148 @@
+import React from 'react';
+import ContentEditable from 'react-contenteditable';
+import getSelection from './utils/getSelection';
+import getCaretCoordinates from './utils/getCaretCoordinates';
+import ActionMenu from './actionMenu/ActionMenu';
 
+class EditableBlock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.contentEditable = React.createRef();
+    this.state = {
+      html: '',
+      tag: 'p',
+      previousKey: null,
+      actionMenuOpen: false,
+      actionMenuPosition: { x: null, y: null },
+    };
+    this.onChangeHandler = this.onChangeHandler.bind(this);
+    this.onKeyDownHandler = this.onKeyDownHandler.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.calculateActionMenuPosition =
+      this.calculateActionMenuPosition.bind(this);
+    this.openActionMenu = this.openActionMenu.bind(this);
+    this.closeActionMenu = this.closeActionMenu.bind(this);
+  }
 
+  componentDidMount() {
+    this.setState({ html: this.props.html, tag: this.props.tag });
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const htmlChanged = prevState.html !== this.state.html;
+    const tagChanged = prevState.tag !== this.state.tag;
+    if (htmlChanged || tagChanged) {
+      this.props.updatePage({
+        id: this.props.id,
+        html: this.state.html,
+        tag: this.state.tag,
+      });
+    }
+  }
+  onChangeHandler(e) {
+    this.setState({ html: e.target.value });
+  }
 
+  onKeyDownHandler(e) {
+    if (e.key === '/') {
+      this.setState({ htmlBackup: this.state.html });
+    }
+    if (e.key === 'Enter') {
+      if (this.state.previousKey !== 'Shift') {
+        e.preventDefault();
+        this.props.addBlock({
+          id: this.props.id,
+          ref: this.contentEditable.current,
+        });
+      }
+    }
+    if (e.key === 'Backspace' && !this.state.html) {
+      e.preventDefault();
+      this.props.deleteBlock({
+        id: this.props.id,
+        ref: this.contentEditable.current,
+      });
+    }
+    this.setState({ previousKey: e.key });
+  }
 
-const EditableBlock = () => {
-  return (
-    <div>hello</div>
-  )
+  calculateActionMenuPosition(parent, initiator) {
+    switch (initiator) {
+      case 'TEXT_SELECTION':
+        const { x: endX, y: endY } = getCaretCoordinates(false); // fromEnd
+        const { x: startX, y: startY } = getCaretCoordinates(true); // fromStart
+        const middleX = startX + (endX - startX) / 2;
+        return { x: middleX, y: startY };
+      // case 'DRAG_HANDLE_CLICK':
+      //   const x =
+      //     parent.offsetLeft - parent.scrollLeft + parent.clientLeft - 90;
+      //   const y = parent.offsetTop - parent.scrollTop + parent.clientTop + 35;
+      //   return { x: x, y: y };
+      default:
+        return { x: null, y: null };
+    }
+  }
+
+  openActionMenu(parent, trigger) {
+    const { x, y } = this.calculateActionMenuPosition(parent, trigger);
+    this.setState({
+      ...this.state,
+      actionMenuPosition: { x: x, y: y },
+      actionMenuOpen: true,
+    });
+    // Add listener asynchronously to avoid conflicts with
+    // the double click of the text selection
+    setTimeout(() => {
+      document.addEventListener('click', this.closeActionMenu, false);
+    }, 100);
+  }
+  closeActionMenu() {
+    this.setState({
+      ...this.state,
+      actionMenuPosition: { x: null, y: null },
+      actionMenuOpen: false,
+    });
+    document.removeEventListener('click', this.closeActionMenu, false);
+  }
+
+  handleMouseUp() {
+    const block = this.contentEditable.current;
+    const { selectionStart, selectionEnd } = getSelection(block);
+    if (selectionStart !== selectionEnd) {
+      console.log(selectionStart);
+      console.log(selectionEnd);
+      this.openActionMenu(block, 'TEXT_SELECTION');
+    }
+  }
+
+  render() {
+    return (
+      <>
+        {this.state.actionMenuOpen && (
+          <ActionMenu
+            position={this.state.actionMenuPosition}
+            actions={{
+              turnInto: () => this.openTagSelectorMenu('ACTION_MENU'),
+            }}
+          />
+        )}
+        <ContentEditable
+          //disabled={false} // use true to disable editing
+          style={{
+            backgroundColor: '#E1E6FA',
+            marginLeft: '24px',
+            marginRight: '24px',
+          }}
+          className="Block"
+          innerRef={this.contentEditable}
+          html={this.state.html}
+          tagName={this.state.tag}
+          onChange={this.onChangeHandler}
+          onKeyDown={this.onKeyDownHandler}
+          onMouseUp={this.handleMouseUp}
+          // actionMenuOpen이 true일 경우 style 바꿀 생각 필요
+        />
+      </>
+    );
+  }
 }
 export default EditableBlock;

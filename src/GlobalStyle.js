@@ -14,22 +14,13 @@ a{
   text-decoration-line : none;
   color: black;
 }
-input,
-button,
-ul,
-p {
-  all: unset;
-}
-.EditablePage{
-  width: 350px;
-  height: 600px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
-  background: white;
+p{
+  font-size: 12px
+  display: block;
+  margin-block-start: 0px;
+  margin-block-end: 6px;
+  /* margin-inline-start: 0px;
+  margin-inline-end: 0px; */
 }
 `;
 

@@ -1,12 +1,72 @@
-import { useState } from "react";
-import EditableBlock from "./EditableBlock";
+import { useState } from 'react';
+import EditableBlock from './EditableBlock';
+import uid from './utils/uid';
 const EditPage = () => {
-  const [blocks,setBlocks] = useState([]);
+  const initialBlock = { id: uid(), html: '', tag: 'p' };
+  const [blocks, setBlocks] = useState([initialBlock]);
 
-  return(
-    <div style={{display: 'flex', flexDirection: 'column', width: "450px", margin: '12px', border: '1px solid black'}}>
-      <EditableBlock/>
+  const updatePageHandler = (updatedBlock) => {
+    const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
+    const updatedBlocks = [...blocks];
+    updatedBlocks[index] = {
+      ...updatedBlocks[index],
+      tag: updatedBlock.tag,
+      html: updatedBlock.html,
+    };
+    setBlocks(updatedBlocks);
+  };
+
+  const addBlockHandler = (currentBlock) => {
+    const newBlock = { id: uid(), html: '', tag: 'p' };
+    const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
+    const updatedBlocks = [...blocks];
+    updatedBlocks.splice(index + 1, 0, newBlock);
+    setBlocks(updatedBlocks);
+    // this.setState({ blocks: updatedBlocks }, () => {
+    //   currentBlock.ref.nextElementSibling.focus();
+    // });
+  };
+
+  const deleteBlockHandler = (currentBlock) => {
+    const previousBlock = currentBlock.ref.previousElementSibling;
+    if (previousBlock) {
+      const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
+      const updatedBlocks = [...blocks];
+      updatedBlocks.splice(index, 1);
+      setBlocks(updatedBlocks);
+      // this.setState({ blocks: updatedBlocks }, () => {
+      //   setCaretToEnd(previousBlock);
+      //   previousBlock.focus();
+      // });
+    }
+  };
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '450px',
+        minHeight: '580px',
+        margin: '24px',
+        paddingTop: '24px',
+        border: '1px solid black',
+      }}
+    >
+      {blocks.map((block) => {
+        return (
+          <EditableBlock
+            key={block.id}
+            id={block.id}
+            tag={block.tag}
+            html={block.html}
+            updatePage={updatePageHandler}
+            addBlock={addBlockHandler}
+            deleteBlock={deleteBlockHandler}
+          />
+        );
+      })}
     </div>
-  )
-}
+  );
+};
 export default EditPage;

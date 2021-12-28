@@ -1,13 +1,13 @@
-import EditablePage from "./EditablePage";
-import GlobalStyle from "./GlobalStyle";
+import EditablePage from './EditablePage';
+import GlobalStyle from './GlobalStyle';
 
 const App = () => {
   return (
     <>
       <GlobalStyle />
-      <EditablePage/>
+      <EditablePage />
     </>
   );
-}
+};
 
 export default App;

@@ -25,7 +25,7 @@ const ActionMenu = ({ position, actions }) => {
           // className={styles.menuItem}
           role="button"
           tabIndex="0"
-          onClick={() => actions.turnInto()}
+          onClick={() => actions.turnIntoBlock()}
         >
           블록 만들기
         </MenuItem>

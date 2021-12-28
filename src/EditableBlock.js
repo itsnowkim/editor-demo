@@ -11,9 +11,12 @@ class EditableBlock extends React.Component {
     this.state = {
       html: '',
       tag: 'p',
+      isBlock: true,
       previousKey: null,
       actionMenuOpen: false,
       actionMenuPosition: { x: null, y: null },
+      selectionStart: 0,
+      selectionEnd: 0,
     };
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.onKeyDownHandler = this.onKeyDownHandler.bind(this);
@@ -82,13 +85,17 @@ class EditableBlock extends React.Component {
     }
   }
 
-  openActionMenu(parent, trigger) {
+  openActionMenu(parent, trigger, start, end) {
+    // floating point x, y value
     const { x, y } = this.calculateActionMenuPosition(parent, trigger);
     this.setState({
       ...this.state,
       actionMenuPosition: { x: x, y: y },
       actionMenuOpen: true,
+      selectionStart: start,
+      selectionEnd: end,
     });
+
     // Add listener asynchronously to avoid conflicts with
     // the double click of the text selection
     setTimeout(() => {
@@ -108,9 +115,18 @@ class EditableBlock extends React.Component {
     const block = this.contentEditable.current;
     const { selectionStart, selectionEnd } = getSelection(block);
     if (selectionStart !== selectionEnd) {
-      console.log(selectionStart);
-      console.log(selectionEnd);
-      this.openActionMenu(block, 'TEXT_SELECTION');
+      // set position
+      this.setState({
+        ...this.state,
+        selectionStart: selectionStart,
+        selectionEnd: selectionEnd,
+      });
+      this.openActionMenu(
+        block,
+        'TEXT_SELECTION',
+        selectionStart,
+        selectionEnd
+      );
     }
   }
 
@@ -121,7 +137,15 @@ class EditableBlock extends React.Component {
           <ActionMenu
             position={this.state.actionMenuPosition}
             actions={{
-              turnInto: () => this.openTagSelectorMenu('ACTION_MENU'),
+              turnIntoBlock: () =>
+                this.props.updateBlock({
+                  id: this.props.id,
+                  html: this.state.html,
+                  tag: this.state.tag,
+                  isBlock: !this.state.isBlock,
+                  startPoint: this.state.selectionStart,
+                  endPoint: this.state.selectionEnd,
+                }),
             }}
           />
         )}

@@ -17,7 +17,7 @@ const EditPage = () => {
   };
 
   const addBlockHandler = (currentBlock) => {
-    const newBlock = { id: uid(), html: '', tag: 'p' };
+    const newBlock = { id: uid(), html: '', tag: 'p', isBlock: true };
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
@@ -39,6 +39,19 @@ const EditPage = () => {
       //   previousBlock.focus();
       // });
     }
+  };
+
+  const updateBlockHandler = (currentBlock) => {
+    console.log(currentBlock);
+    // const index = blocks.map((b) => b._id).indexOf(currentBlock.id);
+    // const updatedBlocks = [...blocks];
+    // updatedBlocks[index] = {
+    //   ...updatedBlocks[index],
+    //   tag: currentBlock.tag,
+    //   html: currentBlock.html,
+    //   isBlock: currentBlock.isBlock,
+    // };
+    // setBlocks(updatedBlocks);
   };
 
   return (
@@ -63,6 +76,7 @@ const EditPage = () => {
             updatePage={updatePageHandler}
             addBlock={addBlockHandler}
             deleteBlock={deleteBlockHandler}
+            updateBlock={updateBlockHandler}
           />
         );
       })}

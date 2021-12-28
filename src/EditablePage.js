@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import EditableBlock from './EditableBlock';
 import uid from './utils/uid';
+import fetchedData from './data.json';
+
 const EditPage = () => {
   const initialBlock = { id: uid(), html: '', tag: 'p', flag: false };
   const [blocks, setBlocks] = useState([initialBlock]);

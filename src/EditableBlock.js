@@ -160,6 +160,7 @@ class EditableBlock extends React.Component {
           style={{
             marginLeft: '24px',
             marginRight: '24px',
+            padding: '16px',
             background: this.props.flag ? '#DBE1F6' : '#EDEDED',
             border: this.props.flag ? '1px solid #4C6EF5' : null,
             outlineColor: '#4C6EF5',

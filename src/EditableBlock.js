@@ -58,7 +58,7 @@ class EditableBlock extends React.Component {
       this.setState({ htmlBackup: this.state.html });
     }
     if (e.key === 'Enter') {
-      if (this.state.previousKey !== 'Shift') {
+      if (this.state.previousKey === 'Enter') {
         e.preventDefault();
         this.props.addBlock({
           id: this.props.id,

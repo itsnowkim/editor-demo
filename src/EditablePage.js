@@ -52,43 +52,36 @@ const EditPage = () => {
     const newHtml = targetHtml.substring(startPoint, endPoint);
     const nextHtml = targetHtml.substring(endPoint);
     const updatedBlocks = [...blocks];
-    // console.log(prevHtml);
-    // console.log(newHtml);
-    // console.log(nextHtml);
-
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
 
     if (prevHtml.length === 0 && nextHtml.length === 0) {
-      //just update that index
-      console.log('case1');
       updatedBlocks[index] = {
         ...updatedBlocks[index],
         flag: 'true',
       };
     } else if (prevHtml.length === 0 && nextHtml.length !== 0) {
-      //new -> index, next -> next
-      console.log('case2');
-      console.log(nextHtml.length);
-      updatedBlocks[index] = {
-        ...updatedBlocks[index],
-        flag: 'true',
-        html: newHtml,
-      };
+      const updateBlock = { id: uid(), html: newHtml, tag: 'p', flag: 'true' };
       const newBlock = { id: uid(), html: nextHtml, tag: 'p', flag: 'false' };
+      updatedBlocks.splice(index, 1, updateBlock);
       updatedBlocks.splice(index + 1, 0, newBlock);
     } else if (prevHtml.length !== 0 && nextHtml.length === 0) {
-      // prev -> index, new -> next
-      console.log('case3');
-      updatedBlocks[index] = {
-        ...updatedBlocks[index],
+      const updateBlock = {
+        id: uid(),
         html: prevHtml,
+        tag: 'p',
+        flag: 'false',
       };
       const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: 'true' };
+      updatedBlocks.splice(index, 1, updateBlock);
       updatedBlocks.splice(index + 1, 0, newBlock);
     } else if (prevHtml.length !== 0 && nextHtml.length !== 0) {
-      // update all
-      console.log('case4');
-      updatedBlocks[index] = { ...updatedBlocks[index], html: prevHtml };
+      const updateBlock = {
+        id: uid(),
+        html: prevHtml,
+        tag: 'p',
+        flag: 'false',
+      };
+      updatedBlocks.splice(index, 1, updateBlock);
       const newBlock = { id: uid(), html: newHtml, tag: 'p', flag: 'true' };
       updatedBlocks.splice(index + 1, 0, newBlock);
       const nextBlock = { id: uid(), html: nextHtml, tag: 'p', flag: 'false' };

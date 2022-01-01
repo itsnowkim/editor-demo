@@ -40,13 +40,15 @@ class EditableBlock extends React.Component {
   }
 
   // component render 최적화
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
+  shouldComponentUpdate(nextProps, nextState) {
     if (
       this.state.html !== nextState.html ||
       this.state.flag !== nextState.flag ||
       this.state.actionMenuOpen !== nextState.actionMenuOpen
     ) {
       // console.log('SCU는 true임');
+      console.log('true : ' + this.props.id);
+      console.log('html : ' + this.props.html);
       return true;
     }
     // console.log('SCU는 false임');
@@ -54,17 +56,19 @@ class EditableBlock extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('componentDidUpdate');
+    console.log('componentDidUpdate : ' + this.props.id);
+    // console.log(this.props.id);
     // console.log(this.state.html);
     const htmlChanged = prevState.html !== this.state.html;
-    const tagChanged = prevState.tag !== this.state.tag;
+    const tagChanged = this.props.tag !== this.state.tag;
     const blockChanged = prevState.flag !== this.state.flag;
+
     if (htmlChanged || tagChanged || blockChanged) {
       this.props.updatePage({
         id: this.props.id,
         html: this.state.html,
         tag: this.state.tag,
-        flag: this.props.flag,
+        flag: this.state.flag,
       });
     }
   }

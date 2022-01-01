@@ -101,7 +101,7 @@ const EditPage = () => {
         paddingTop: '24px',
         border: '1px solid black',
         borderRadius: '2px',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#F1F3F5',
       }}
     >
       {blocks.map((block) => {

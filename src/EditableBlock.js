@@ -191,7 +191,7 @@ class EditableBlock extends React.Component {
             paddingBottom: '12px',
             paddingLeft: '6px',
             paddingRight: '6px',
-            background: this.props.flag === 'true' ? '#DBE1F6' : '#EDEDED',
+            background: this.props.flag === 'true' ? '#DBE1F6' : '#F1F3F5',
             border: this.props.flag === 'true' ? '1px solid #4C6EF5' : null,
             outlineColor: '#4C6EF5',
             borderRadius: '2px',

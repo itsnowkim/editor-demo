@@ -6,9 +6,11 @@ import ActionMenu from './actionMenu/ActionMenu';
 
 class EditableBlock extends React.Component {
   constructor(props) {
+    console.log('constructor');
     super(props);
     this.contentEditable = React.createRef();
     this.state = {
+      htmlBackup: null,
       html: '',
       tag: 'p',
       flag: 'false',
@@ -28,6 +30,7 @@ class EditableBlock extends React.Component {
   }
 
   componentDidMount() {
+    console.log('componentDidMount');
     this.setState({
       ...this.state,
       html: this.props.html,
@@ -36,7 +39,23 @@ class EditableBlock extends React.Component {
     });
   }
 
+  // component render 최적화
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    if (
+      this.state.html !== nextState.html ||
+      this.state.flag !== nextState.flag ||
+      this.state.actionMenuOpen !== nextState.actionMenuOpen
+    ) {
+      // console.log('SCU는 true임');
+      return true;
+    }
+    // console.log('SCU는 false임');
+    return false;
+  }
+
   componentDidUpdate(prevProps, prevState) {
+    console.log('componentDidUpdate');
+    // console.log(this.state.html);
     const htmlChanged = prevState.html !== this.state.html;
     const tagChanged = prevState.tag !== this.state.tag;
     const blockChanged = prevState.flag !== this.state.flag;
@@ -50,6 +69,7 @@ class EditableBlock extends React.Component {
     }
   }
   onChangeHandler(e) {
+    console.log('onChangeHandler');
     this.setState({ ...this.state, html: e.target.value });
   }
 
@@ -174,7 +194,7 @@ class EditableBlock extends React.Component {
             fontSize: '12px',
           }}
           innerRef={this.contentEditable}
-          html={this.props.html}
+          html={this.state.html}
           flag={this.props.flag}
           tagName={this.state.tag}
           onChange={this.onChangeHandler}
